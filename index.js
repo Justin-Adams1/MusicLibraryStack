@@ -35,9 +35,15 @@ app.post('/api/songs', [validateSong], async (req, res) => {
     return res.end('{"success" : "Added Song Successfully"}');
 });
 
-app.delete('/api/songs/:id', [validateSong], async (req, res) => {
+app.put('/api/songs/:id', [validateSong], async (req, res) => {
     const songId = req.params.id;
     const newSongBody = req.body;
-    const result = res.updateSong(songId, newSongBody);
+    const result = repoSongs.updateSong(songId, newSongBody);
     return res.end('{"success" : "Updated Song Successfully"}');
+})
+
+app.delete('/api/songs/:id', [validateSong], async (req, res) => {
+    const songId = req.params.id;
+    const result = res.deleteSong(songId);
+    return res.end('{"success" : "Deleted Song Successfully"}');
 })
