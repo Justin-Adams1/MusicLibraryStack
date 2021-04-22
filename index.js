@@ -1,7 +1,8 @@
 const express = require('express');
 const repoContext = require('./repository/repository-wrapper');
+const repoSongs = require('./repository/music-repository');
 const cors = require('cors');
-const { validateProduct } = require('./middleware/products-validation');
+const { validateSong } = require('./middleware/songValidation');
 
 
 const app = express();
@@ -16,26 +17,27 @@ app.listen(3000, function () {
     console.log("Server started. Listening on port 3000.");
 });
 
-app.get('/api/products', (req, res) => {
-    const products = repoContext.products.findAllProducts();
-    return res.send(products);
+app.get('/api/songs', async (req, res) => {
+    // fetch the songs from the server and return
+    const fullData = repoSongs.findAllSongs();
+    return res.send(fullData);
 });
 
-app.post('/api/products', [validateProduct], (req, res) => {
-    const newProduct = req.body;
-    const addedProduct = repoContext.products.createProduct(newProduct);
-    return res.send(addedProduct);
+app.get('/api/songs/:id', async (req, res) => {
+    const songId = req.params.id;
+    const song = repoSongs.findSongById(songId);
+    return res.send(song);
+});
+
+app.post('/api/songs', [validateSong], async (req, res) => {
+    const newSongBody = req.body;
+    const newSong = repoSongs.createSong(newSongBody);
+    return res.end('{"success" : "Added Song Successfully"}');
+});
+
+app.delete('/api/songs/:id', [validateSong], async (req, res) => {
+    const songId = req.params.id;
+    const newSongBody = req.body;
+    const result = res.updateSong(songId, newSongBody);
+    return res.end('{"success" : "Updated Song Successfully"}');
 })
-
-app.put('/api/products/:id', [validateProduct], (req, res) => {
-    const id = req.params.id;
-    const productPropertiesToUpdate = req.body;
-    const updatedProduct = repoContext.products.updateProduct(id, productPropertiesToUpdate);
-    return res.send(updatedProduct)
-});
-
-app.delete('/api/products/:id', (req, res) => {
-    const id = req.params.id;
-    const updatedDataSet = repoContext.products.deleteProduct(id);
-    return res.send(updatedDataSet);
-});
