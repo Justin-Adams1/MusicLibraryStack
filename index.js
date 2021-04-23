@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.listen(3000, function () {
     console.log("Server started. Listening on port 3000.");
 });
-
+    
 app.get('/api/songs', async (req, res) => {
     // fetch the songs from the server and return
     const fullData = repoSongs.findAllSongs();
@@ -42,8 +42,8 @@ app.put('/api/songs/:id', [validateSong], async (req, res) => {
     return res.end('{"success" : "Updated Song Successfully"}');
 })
 
-app.delete('/api/songs/:id', [validateSong], async (req, res) => {
+app.delete('/api/songs/:id', async (req, res) => {
     const songId = req.params.id;
-    const result = res.deleteSong(songId);
+    const result = repoSongs.deleteSong(songId);
     return res.end('{"success" : "Deleted Song Successfully"}');
 })
